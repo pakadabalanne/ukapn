@@ -1,0 +1,565 @@
+
+
+--RPC--
+
+--leap year--
+
+struct year{
+ int a;
+};
+
+program name{
+   version nnn{
+   int new(year)=1;
+   }=2;
+ }=0x2fffffff;
+ 
+ client.......
+ printf("Enter the year:");
+ scanf("%d",&new_2_arg.a);
+ printf("%d",*result_1);
+ server......
+ if(argp->a % 4!=0){
+	   result = "Leap year";
+	}
+
+----Max number----
+
+struct max{
+   int a;
+   int b;
+};
+
+ program vrrr{
+    version vvv{
+    int nnn(max)=1;
+   }=2;
+ }=0x2fffffff;
+ client.........
+  printf("Enter the 1 value:");
+  scanf("%d",&nnn_2_arg.a);
+       
+  printf("Enter the 2 value:");
+  scanf("%d",&nnn_2_arg.b);
+  printf("Max value is %d",*result_1);
+  server.........
+  if(argp->a > argp->b){
+	   result = argp->a;
+	}
+	else if(argp->a < argp->b){
+	   result = argp->b;
+	}
+
+-----revers number----
+
+struct num{
+int a;
+};
+ program ver{
+   version hhh{
+   int revs(num)=1;
+ }=2;
+}=0x2fffffff;
+
+client..........
+  printf("Enter the numbers:");
+        scanf("%d",&revs_2_arg);
+ printf("Revers number is %d",*result_1);
+server..........
+static int b=0,rvn;
+	
+	while(argp->a !=0)
+	{
+	 b = argp->a % 10;
+	 rvn = b + (rvn*10);
+	 argp->a/=10;
+	 
+	}
+	 result = rvn;
+
+---array----
+
+struct array{
+  int a[5];
+};
+
+ program sgf{
+   version hhj{
+     int arr(array)=1;
+     }=2;
+  }=0x2fffffff;
+ client.............
+  for(int i=0; i<5; i++){
+       printf("Enter the number:");
+       scanf("%d",&(arr_2_arg.a[i]));
+       }
+    printf("value is %d",*result_1);
+ server................
+    for(int i=0; i<5; i++){
+        result =argp->a[i];
+        }
+        
+        
+        
+        
+-----------RMI--------
+
+......normalpro........
+
+interface..........
+
+import java.rmi.*;
+
+ public interface add_interface extends Remote{
+ public int add(int x, int y, int z) throws RemoteException;
+}
+
+
+implimation.......... 
+
+import java.rmi.*;
+import java.rmi.server.*;
+
+ public class addimp extends UnicastRemoteObject implements add_interface{
+  
+  public addimp() throws RemoteException{
+  
+  super();
+  
+  }
+  
+  public int add(int x, int y, int z){
+      return x+y+z;
+  }
+  }
+ client........
+ import java.rmi.*;
+
+ public class addclient{
+ 
+  public static void main(String [] argv){
+   
+   try{
+      add_interface a = (add_interface)Naming.lookup("adder");
+      System.out.println(a.add(5,5,5));
+   }
+   
+   catch(Exception e){
+   System.out.println(e);
+   }
+   
+   }}
+ server..........
+ import java.rmi.*;
+
+public class addserver{
+
+public static void main(String [] argv)
+{
+ try{
+   add_interface a = new addimp();
+   Naming.rebind("adder",a);
+   System.out.println("Server connectet");
+ 
+ }
+ 
+ 
+ catch(Exception e){
+ System.out.println(e);
+ }
+}
+}
+
+-----Array------
+
+interface........
+
+import java.rmi.*;
+
+
+interface Arrayint extends Remote{
+	public int maxVal(int[] arr)throws RemoteException;
+	public int minVal(int[] arr)throws RemoteException;
+	public int avgVal(int[] arr)throws RemoteException;
+}
+
+implimation----------
+
+import java.rmi.*;
+import java.rmi.server.*;
+
+class ArrayImp extends UnicastRemoteObject implements Arrayint{
+	    ArrayImp()throws RemoteException{
+		super();
+	}
+
+	public int maxVal(int[] arr)throws RemoteException{
+		int max=arr[0];
+		for(int i=0;i<arr.length;i++){
+			if(arr[i]>max){
+				max=arr[i];
+			}
+		}
+		return max;
+	}
+
+	public int minVal(int[] arr)throws RemoteException{
+		int min=arr[0];
+		for(int i=0;i<arr.length;i++){
+			if(arr[i]<min){
+				min=arr[i];
+			}
+		}
+		return min;
+	}
+
+	public int avg(int[] arr)throws RemoteException{
+		int sum=0;
+		float avrg;
+
+		for(int i=0;i<arr.length;i++){
+			sum+=arr[i];
+		}
+		
+		return (double)sum/arr.length;
+	}
+
+}
+
+client-----------
+import java.rmi.Naming;
+import java.util.Scanner;
+
+class ArrayClient{
+	public static void main(String[] args) {
+		Scanner scn=new Scanner(System.in);
+
+		try{
+			System.out.print("Enter the Array Size: ");
+			int size=scn.nextInt();
+			int[] arr=new int[size];
+
+			for (int i=0;i<size;i++) {
+				System.out.print("Enter the "+(i+1)+" Value: ");
+				int num=scn.nextInt();
+				arr[i]=	new int[num];			
+			}
+			Arrayint obj=(Arrayint) Naming.lookup("Array");
+			System.out.println("Array max Value is "+obj.maxVal(arr));
+			System.out.println("Array min Value is "+obj.minVal(arr));
+			System.out.println("Array Average Value is "+obj.avgVal(arr));
+
+		}catch(Exception e)
+		{
+			System.out.println("Server Error "+e);
+		}
+	}
+}
+
+server------------
+
+import java.rmi.Naming;
+
+class ArrayServer{
+	public static void main(String[] args) {
+		try{
+			// ArrayImp h=new ArrayImp();
+			Naming.rebind("Array",new ArrayImp());
+			System.out.println("Server is Ready.....");
+		}catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+	}
+}
+
+-------Calculater-----
+
+interface-----
+
+import java.rmi.Naming;
+
+class ArrayServer{
+	public static void main(String[] args) {
+		try{
+			// ArrayImp h=new ArrayImp();
+			Naming.rebind("Array",new ArrayImp());
+			System.out.println("Server is Ready.....");
+		}catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+	}
+}
+
+impli-------------
+import java.rmi.*;
+import java.rmi.server.*;
+
+class CalImp extends UnicastRemoteObject implements CalIn{
+
+   	public CalImp()throws RemoteException{
+   		super();
+   	}
+
+   	 public int add(int a,int b)throws RemoteException{
+   	 	return a+b;
+   	 }
+
+   	 public int sub(int a,int b)throws RemoteException{
+   	 	return a-b;
+   	 }
+
+   	 public int mul(int a,int b)throws RemoteException{
+   	 	return a*b;
+   	 }
+
+   	 public int div(int a,int b)throws RemoteException{
+   	 	return a/b;
+   	 }
+   }
+
+client--------------
+
+import java.rmi.Naming;
+
+class CalClient{
+	public static void main(String[] args) {
+		try{
+			CaIn h=(CalIn) Naming.lookup("Calculation");
+
+			System.out.println(h.add(int a,int b));
+			System.out.println(h.sub(int a,int b));
+			System.out.println(h.mul(int a,int b));
+			System.out.println(h.div(int a,int b));
+		}catch(Exception e){
+			System.out.println("Error: "+e);
+		}
+	}
+}
+
+server-----------
+
+import java.rmi.Naming;
+
+class CalServer{
+	public static void main(String[] args) {
+		try{
+			CalImp h=new CalImp();
+			Naming.rebind("Calculation",h);
+			System.out.println("Server is intiated");
+		}catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+	}
+}
+
+
+
+
+ ---MPI------
+
+...normal.....
+
+#include<mpi.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+  int main(int argc, char** argv){
+  
+  MPI_Init(NULL,NULL);
+  
+  int a;
+  int b;
+  int c;
+  
+  MPI_Comm_size(MPI_COMM_WORLD,&a);
+  MPI_Comm_rank(MPI_COMM_WORLD,&b);
+  
+  char processor_name[MPI_MAX_PROCESSOR_NAME];
+  
+  MPI_Get_processor_name(processor_name,&c);
+  
+  printf("Distributed and cloude computing");
+  
+  MPI_Finalize();
+  
+  }
+ 
+ mpicc filname.c -o filename
+ mpirun -np ./filenamen
+
+-------cal-------
+
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+  int main(int argc,char const *argv[])
+  {
+   MPI_Init(NULL,NULL);
+   
+   int worldRank;
+   MPI_Comm_rank(MPI_COMM_WORLD,&worldRank);
+   
+   int worldSize;
+   MPI_Comm_size(MPI_COMM_WORLD,&worldSize);
+   
+   int num1,num2;
+   char opr;
+   
+   if(worldRank==0)
+   {
+     printf("----Calculator---\n");
+     printf("Enter the first number:");
+     scanf("%d",&num1);
+     
+     printf("Enter the second number:");
+     scanf("%d",&num2);
+     
+     printf("Enter the operation:");
+     scanf("%s",&opr);
+     
+     MPI_Send(&num1,1,MPI_INT,1,2,MPI_COMM_WORLD);
+     MPI_Send(&num2,1,MPI_INT,1,2,MPI_COMM_WORLD);
+     MPI_Send(&opr,1,MPI_CHAR,1,2,MPI_COMM_WORLD);
+   }
+   else if(worldRank==1){
+    MPI_Recv(&num1,1,MPI_INT,0,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    MPI_Recv(&num2,1,MPI_INT,0,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    MPI_Recv(&opr,1,MPI_CHAR,0,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+   
+    int temp;
+    
+    if(opr=='+'){
+      temp=num1+num2;
+    }
+    else if(opr=='-'){
+      temp=num1-num2;
+    }
+    else if(opr=='*'){
+      temp=num1*num2;
+    }
+    else if(opr=='/'){
+      temp=num1/num2;
+    }
+     printf("Calculation:%d\n",temp);
+   }
+  }
+ 
+----------area----
+
+#include <stdio.h>
+#include <mpi.h>
+#include <math.h>
+
+
+double calculateTrianglePerimeter(double side1, double side2, double side3) {
+    return side1 + side2 + side3;
+}
+
+
+double calculateCylinderSurfaceArea(double radius, double height) {
+    return 2 * M_PI * radius * (radius + height);
+}
+
+
+double calculateCylinderVolume(double radius, double height) {
+    return M_PI * radius * radius * height;
+}
+
+
+double calculateCircleArea(double radius) {
+    return M_PI * radius * radius;
+}
+
+
+double calculateCircleCircumference(double radius) {
+    return 2 * M_PI * radius;
+}
+
+int main(int argc, char *argv[]) {
+    MPI_Init(&argc, &argv);
+
+    int rank, size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    double baseTri, heightTri, side1Tri, side2Tri, side3Tri;
+    double radiusCyl, heightCyl;
+    double radiusCircle;
+
+    if (rank == 0) {
+
+        printf("<< Triangle >>\n");
+        printf("Enter the base of the triangle: ");
+        scanf("%lf", &baseTri);
+        printf("Enter the height of the triangle: ");
+        scanf("%lf", &heightTri);
+        printf("\n");
+        printf("<< Enter Triangle Sides >>\n");
+        printf("Enter the length of triangle side 1: ");
+        scanf("%lf", &side1Tri);
+        printf("Enter the length of triangle side 2: ");
+        scanf("%lf", &side2Tri);
+        printf("Enter the length of triangle side 3: ");
+        scanf("%lf", &side3Tri);
+
+     
+        printf("\n<< Cylinder >>\n");
+        printf("Enter the radius of the cylinder: ");
+        scanf("%lf", &radiusCyl);
+        printf("Enter the height of the cylinder: ");
+        scanf("%lf", &heightCyl);
+
+      
+      printf("\n<< Circle >>\n");
+        printf("Enter the radius of the circle: ");
+        scanf("%lf", &radiusCircle);
+    }
+
+   
+    MPI_Bcast(&baseTri, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&heightTri, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&side1Tri, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&side2Tri, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&side3Tri, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&radiusCyl, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&heightCyl, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&radiusCircle, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+
+    double localAreaTri = 0.5 * baseTri * heightTri / size;
+    double localPerimeterTri = calculateTrianglePerimeter(side1Tri, side2Tri, side3Tri) / size;
+
+    double localSurfaceAreaCyl = calculateCylinderSurfaceArea(radiusCyl, heightCyl) / size;
+    double localVolumeCyl = calculateCylinderVolume(radiusCyl, heightCyl) / size;
+
+    double localAreaCircle = calculateCircleArea(radiusCircle) / size;
+    double localCircumferenceCircle = calculateCircleCircumference(radiusCircle) / size;
+
+    
+    double globalAreaTri, globalPerimeterTri;
+    double globalSurfaceAreaCyl, globalVolumeCyl;
+    double globalAreaCircle, globalCircumferenceCircle;
+
+    MPI_Reduce(&localAreaTri, &globalAreaTri, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&localPerimeterTri, &globalPerimeterTri, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&localSurfaceAreaCyl, &globalSurfaceAreaCyl, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&localVolumeCyl, &globalVolumeCyl, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&localAreaCircle, &globalAreaCircle, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&localCircumferenceCircle, &globalCircumferenceCircle, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        printf("\nResults:\n");
+        printf("Triangle - Area: %.2f,   Perimeter: %.2f\n", globalAreaTri, globalPerimeterTri);
+        printf("Cylinder - Area: %.2f,  Volume   : %.2f\n", globalSurfaceAreaCyl, globalVolumeCyl);
+        printf("Circle   - Area: %.2f,   Perimeter: %.2f\n", globalAreaCircle, globalCircumferenceCircle);
+    }
+
+    MPI_Finalize();
+    return 0;
+}
+
+
+
+
+       
